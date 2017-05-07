@@ -68,42 +68,23 @@
         (keys filtered-freqs))) ; grab keys since filtered-freqs returns a map
 
 ; 0 1 1 2 3 5 8 ...
-(defn fast-fibo [n] nil )
-    ; (loop [until n ; how many numbers to find
-    ;        numbers-found 0 ; how many numbers we have found, incremented with each recursion
-    ;        current-n 0 ; the current fib number we are on
-    ;        n-1 0] ; the n-1 fib number
-    ;     (if (= (inc numbers-found) until)
-    ;         current-n ; we've found all we need
-    ;         (if (= 0 current-n)
-    ;             (recur until (inc numbers-found) 0 0) ; base case
-    ;             (if (= 1 current-n)
-    ;                 (recur until (inc numbers-found) 1 0)
-    ;                 (recur until (inc numbers-found) (+ n-1 current-n) current-n))))))
-            ; (cond
-            ;     (= 0 current-n)
-            ;     (= 1 current-n)  ; base case
-            ;     :else  ; we are higher than base cases, need to recurse
-            ;     )))) ; we need to keep recursing
-
-; (defn fast-fibo [n]
-;     (loop [until n
-;            n-1 1
-;            n-2 1
-;            acc 1]
-;            (cond
-;                (= 0 until) 0 ; base cases
-;                (= 1 until) 1 ; base cases
-;                (= 2 until) 1 ; base cases
-;                (zero? until) (+ n-1 n-2) ; we're done
-;                :else (recur (dec until) acc n-1 (+ n-1 n-2)))))
+(defn fast-fibo [fib-nums-to-find]
+    (if (= 0 fib-nums-to-find)
+        0
+        (loop [n 1
+               n-1 0
+               fib-nums-found 1]
+               (if (= fib-nums-found fib-nums-to-find)
+                    n
+                    (recur (+ n n-1) n (inc fib-nums-found))))))
 
 (defn cut-at-repetition [a-seq]
   (if (empty? a-seq)
     nil
-    (vec (set a-seq))))
-; need to actually write the algorithm
-;
-; FAIL "cut-at-repetition" at (looping_is_recursion.clj:58)
-;    Expected: [:cat :dog :house :milk 1]
-;      Actual: [1 :dog :cat :house :milk]
+    (loop [seen-set #{}
+           new-set []
+           current-index 0]
+           (let [next-item (get a-seq current-index)]
+           (if (or (contains? seen-set next-item) (= (count seen-set) (count a-seq)))
+           new-set ; found a dupe or reached end, return what we have
+           (recur (conj seen-set next-item) (conj new-set next-item) (inc current-index))))))) ; not a dupe, so add to new-set and seen-set
